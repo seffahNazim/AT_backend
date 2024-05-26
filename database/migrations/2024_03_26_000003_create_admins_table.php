@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('permission_id');
             $table->unsignedBigInteger('user_id')->unique();
             $table->boolean('is_super')->default(false);
-            $table->softDeletes();
             $table->timestamps();
             $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

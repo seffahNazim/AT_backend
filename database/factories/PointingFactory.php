@@ -18,7 +18,7 @@ class PointingFactory extends Factory
     public function definition(): array
     {
         return [
-            'employe_id' => Employe::inRandomOrder()->first()->id,
+            'employe_id' => Employe::withoutGlobalScope('softDeleted')->inRandomOrder()->value('id'),
             'check_in' => fake()->optional()->time(),
             'check_out' => fake()->optional()->time(),
             'date' => fake()->optional()->dateTimeBetween('2024-01-01', '2024-12-31'),

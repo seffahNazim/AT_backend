@@ -18,7 +18,6 @@ return new class extends Migration
             $table->date("birthday");
             $table->string("sexe");
             $table->binary('photo')->nullable();
-            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

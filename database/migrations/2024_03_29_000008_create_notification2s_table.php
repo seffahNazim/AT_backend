@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employe_id');
             $table->string('text');
-            $table->string('type');
+            $table->timestamp('read_at')->nullable();
             $table->foreign('employe_id')->references('id')->on('employes')->onDelete('cascade');
             $table->timestamps();
         });

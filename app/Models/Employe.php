@@ -9,13 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User;
 use App\Models\Notification2;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 
 class Employe extends User
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory ;
 
     protected $fillable = [
         'full_name',
@@ -23,10 +22,7 @@ class Employe extends User
         'birthday',
         'sexe',
         'photo',
-        'is_deleted',
     ];
-
-    protected $dates = ['deleted_at'];
 
     public function notification2()
     {

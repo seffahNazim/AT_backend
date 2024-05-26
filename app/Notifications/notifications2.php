@@ -14,8 +14,9 @@ class notifications2 extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct($message)
+    public function __construct($employe , $message)
     {
+        $this->employe = $employe ;
         $this->message = $message ;
     }
 
@@ -48,7 +49,8 @@ class notifications2 extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' => $this->message ,
+            'text' => $this->message,
+            'employe_id' => $this->employe->id,
         ];
     }
 }

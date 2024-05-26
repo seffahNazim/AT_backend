@@ -14,11 +14,12 @@ class notifications1 extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($message , $type)
     {
-        //
+        $this->message = $message ;
+        $this->type = $type ;
     }
-
+    
     /**
      * Get the notification's delivery channels.
      *
@@ -48,7 +49,8 @@ class notifications1 extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'text' => $this->message,
+            'type' => $this->type,
         ];
     }
 }

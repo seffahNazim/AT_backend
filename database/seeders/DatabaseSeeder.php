@@ -7,6 +7,8 @@ use App\Models\Employe;
 use App\Models\Admin;
 use App\Models\Permission;
 use App\Models\Pointing;
+use App\Models\Notification1;
+use App\Models\Notification2;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,9 +19,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Employe::factory(5)->create();
         Permission::factory(1)->create();
-        Admin::factory(5)->create();
+
+        $numberOfAdmins = 2;
+        $numberOfEmployes = 8;
+        // Créer des utilisateurs pour les admins
+        User::factory($numberOfAdmins)->create(['role' => 'admin'])->each(function ($user) {
+            Admin::factory()->create(['user_id' => $user->id]);
+        });
+
+        // Créer des utilisateurs pour les employés
+        User::factory($numberOfEmployes)->create(['role' => 'employe'])->each(function ($user) {
+            Employe::factory()->create(['user_id' => $user->id]);
+        });
+
+        // Créer des pointages et des notifications
         Pointing::factory(5)->create();
+        
+        Pointing::factory(5)->create();
+        Notification1::factory(5)->create();
+        Notification2::factory(5)->create();
     }
 }

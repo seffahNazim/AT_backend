@@ -7,18 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Notification1;
 use App\Models\User;
 use App\Models\Permission;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admin extends User
 {
-    use HasFactory , SoftDeletes;
+    use HasFactory ;
 
     protected $fillable = [
         'user_id',
         'permission_id',
     ];
-
-    protected $dates = ['deleted_at'];
 
     public function user()
     {

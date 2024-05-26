@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('text');
             $table->string('type');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
-    } 
+    }
 
     /**
      * Reverse the migrations.
