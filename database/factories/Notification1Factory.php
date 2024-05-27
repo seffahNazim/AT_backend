@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Notification1>
  */
-class notification_adminFactory extends Factory
+class Notification1Factory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,7 @@ class notification_adminFactory extends Factory
     public function definition(): array
     {
         return [
-            'text' => fake()->text(),
-            'type' => fake()->optional()->randomElement(['ajout_employe', 'supprimer_employe', 'modifier_employe']),
+            //
         ];
     }
 }

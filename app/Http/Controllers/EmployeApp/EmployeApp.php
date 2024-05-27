@@ -21,8 +21,8 @@ class EmployeApp extends Controller
 
         $user = JWTAuth::parseToken()->authenticate();
 
-        if (!$user || !$user->Employe) {
-            return response()->json(['error' => 'no user has been found'], 404);
+        if(!$user || !$user->employe){
+            return response()->json(['error' => 'No user with this matricule'], 404);
         }
 
         list($year, $month) = explode('-', $request->input('date'));
@@ -62,6 +62,28 @@ class EmployeApp extends Controller
         return response()->json(['pointings' => $formattedPointings]);
     }
 
+    public function getNotification(Request $request){
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if (!$user || !$user->Employe) {
+            return response()->json(['error' => 'no user has been found'], 404);
+        }
+
+        $notifications = notification2::where('employe_id' , $user->employe->id)->whereNull('read_at')->get() ;
+
+        $formatterNotifications = [] ;
+        foreach ($notifications as $notification) {
+            $formatterNotification[] = [
+                'id' => $notification->id,
+                'text' =>  $notification->text
+            ];
+            $formatterNotifications = $formatterNotification;
+        }
+
+
+        return response()->json(['notifications' => $formatterNotifications], 200);
+    }
+
     public function getInfoEmploye(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
         if (!$user || !$user->Employe) {
@@ -79,27 +101,5 @@ class EmployeApp extends Controller
         ];
 
         return response()->json($formatterUser, 200);
-    }
-
-    public function getNotification(Request $request){
-
-        $user = JWTAuth::parseToken()->authenticate();
-        if (!$user || !$user->Employe) {
-            return response()->json(['error' => 'no user has been found'], 404);
-        }
-
-        $notifications = $user->Employe->notification2;
-
-        $formatterNotifications = [] ;
-        foreach ($notifications as $notification) {
-            $formatterNotification[] = [
-                'id' => $notification->id,
-                'text' =>  $notification->text
-            ];
-            $formatterNotifications = $formatterNotification;
-        }
-
-
-        return response()->json(['notifications' => $formatterNotifications], 200);
     }
 }

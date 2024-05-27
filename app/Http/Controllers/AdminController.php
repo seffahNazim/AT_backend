@@ -8,6 +8,7 @@ use App\Notifications\notifications2;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Policies\AdminPolicy;
 use App\Models\Employe;
+use App\Models\Permission;
 use App\Models\User ;
 use App\Models\Admin ;
 
@@ -106,56 +107,28 @@ class AdminController extends Controller
         }
     }
 
-    public function updateEmplaye(Request $request){
-        try {
-            $payload = JWTAuth::getPayload();
-            $user = User::where('email', $payload->email)->first();
+    public function updateEmploye(Request $request, $id){
+        $user = User::findOrFail($id);
+        $employee = $user->Employe;
 
-            if(!AdminPolicy::manageEmploye($user)){
-               return response()->json(['error' => 'unauthorized'], 401);
+            if (!$employee) {
+                return response()->json(['error' => 'no employee has been found with this id'], 404);
             }
 
             $request->validate([
-                'matricule' => 'required',
-                'email' => 'email|unique',
-                'password' => '',
-                'sexe' => 'boolean',
-                'birthday' => 'date',
+                'matricule' => 'sometimes|string|max:255|unique:users,matricule',
+                'email' => 'sometimes|string|max:255|unique:users,email',
+                'full_name' => 'sometimes|string|max:255',
+                'birthday' => 'sometimes|date',
+                'phone' => 'sometimes|string|max:20',
+                'sexe' => 'sometimes|string|max:10',
             ]);
 
-            $user = User::where('matricule', $request->matricule)->first();
+            $employee->update($request->only('matricule', 'full_name', 'birthday', 'email', 'phone', 'sexe'));
+            $user->update($request->only('matricule','email'));
 
-            if(!$user){
-                return response()->json(['error' => 'no user has been found'], 404);
-            }else{
-                if ($request->has('email')) {
-                    $user->email = $request->email;
-                } elseif ($request->has('password')) {
-                    $user->password = $request->password;
-                } elseif ($request->has('matricule')) {
-                    $user->matricule = $request->matricule;
-                }
+            return response()->json(['message' => 'Employee updated successfully', 'employee' => $employee , 'user' => $employee->user], 200);
 
-                $user->save();
-
-                $employe = Employe::where('user_id', $user->id)->first();
-
-                if(!$employe){
-                    return response()->json(['error' => 'no employe has been found'], 404);
-                }else {
-                    if ($request->has('sexe')) {
-                        $employee->sexe = $request->sexe;
-                    } elseif ($request->has('birthday')) {
-                        $employee->birthday = $request->birthday;
-                    } elseif ($request->has('photo')) {
-                        $employee->photo = $request->photo;
-                    }
-                    $employee->save();
-                }
-            }
-        } catch (JWTException $e){
-            return response()->json(['error' => 'unauthorized'], 401);
-        }
     }
 
     public function addAdmin(Request $request){
@@ -446,43 +419,52 @@ class AdminController extends Controller
     }
 
     public function managePermission(Request $request){
-        try {
-            // $payload = JWTAuth::getPayload();
+
+        $request->validate([
+            'user_id' => 'required',
+            'access' => 'required|array',
+        ]);
+
+        $request->validate([
+            'access.manage_employe' => 'sometimes',
+            'access.manage_pointing' => 'sometimes',
+            'access.manage_justification' => 'sometimes',
+            'access.send_notification' => 'sometimes',
+        ]);
+
+        $user = User::findOrFail($request->input('user_id'));
+
+        if (!$user) {
+            return response()->json(['error' => 'no user has been found'], 404);
+        }
+
+        $adminPermission = $request->input('access');
+
+        $existingPermission = Permission::where($adminPermission)->first();
+
+        if ($existingPermission) {
+            $user->Admin->permission_id = $existingPermission->id;
+            return response()->json(['message' => 'Linked with an existing permission'], 200);
+        } else {
+            // Créer une nouvelle permission si aucune correspondance n'est trouvée
+            $newPermission = Permission::create($adminPermission);
+            if ($newPermission) {
+                // Attribuer la nouvelle permission à l'utilisateur
+                $user->Admin->permission_id = $newPermission->id;
+                $user->Admin->save();
+                return response()->json(['message' => 'A new permission created and linked'], 200);
+            } else {
+                return response()->json(['error' => 'Not able to create a new permission'], 400);
+            }
+        }
+    }
+
+
+}
+
+// $payload = JWTAuth::getPayload();
             // $user = User::where('email', $payload->email)->first();
 
             // if(!AdminPolicy::manageJustification($user)){
             //    return response()->json(['error' => 'unauthorized'], 401);
             // }
-
-            $request->validate([
-                'user_id' => 'required',
-                'permission' => 'required'
-            ]);
-
-            $user = User::find($request->input('user_id'));
-
-            if(!$user){
-                return response()->json(['error' => 'no user has been found'], 404);
-            }
-
-            $permissions = Permission::all();
-
-            foreach ($permissions as $permission ) {
-                if (condition) {
-                    # code...
-                }
-            }
-
-
-            if(!$justification){
-                return response()->json(['error' => 'no justification has been found with the given id'], 400);
-            }else{
-                $justification->delete();
-                return response()->json(['message' => 'updating justification successfuly'], 201);
-            }
-
-        } catch (JWTException $e){
-            return response()->json(['error' => 'unauthorized'], 401);
-        }
-    }
-}

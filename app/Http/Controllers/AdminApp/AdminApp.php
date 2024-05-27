@@ -10,7 +10,9 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Justification;
 use App\Models\Pemission;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Notification1;
+use Illuminate\Validation\Rule;
 
 class AdminApp extends Controller
 {
@@ -61,7 +63,7 @@ class AdminApp extends Controller
             'matricule' => $employee->user->matricule,
             'password' => $employee->user->password,
             'photo' => $employee->photo,
-            'name' => $employee->full_name,
+            'full_name' => $employee->full_name,
             'device_id' => $employee->device_id,
             'sexe' => $employee->sexe,
             'phone' => $employee->phone,
@@ -237,7 +239,7 @@ class AdminApp extends Controller
 
     public function getAdmins(Request $request){
 
-        $admins = Admin::all();
+        $admins = Admin::where('is_super' , 0)->get();
 
         $formattedUsers = [];
 
@@ -303,4 +305,38 @@ class AdminApp extends Controller
         }
         return response()->json(['notifications' => $formatterNotifications], 200);
     }
+
+    public function permission(Request $request){
+        $user = JWTAuth::parseToken()->authenticate();
+        if (!$user || !$user->Admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $permission = [
+            'manage_employe' => $user->Admin->permission->manage_employe,
+            'manage_pointing' => $user->Admin->permission->manage_pointing,
+            'manage_justification' => $user->Admin->permission->manage_justification,
+            'send_notification' => $user->Admin->permission->send_notification
+        ];
+
+        return response()->json(['permission' => $permission], 200);
+    }
+
+    public function getAdminPermission(Request $request , $id){
+
+        $user = User::findOrFail($id);
+
+        if (!$user || !$user->Admin) {
+            return response()->json(['error' => 'no user has been found'], 404);
+        }
+
+        $permission = [
+            'manage_employe' => $user->Admin->permission->manage_employe,
+            'manage_pointing' => $user->Admin->permission->manage_pointing,
+            'manage_justification' => $user->Admin->permission->manage_justification,
+            'send_notification' => $user->Admin->permission->send_notification
+        ];
+
+        return response()->json(['permission' => $permission], 200);
+    }
+
 }

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Notification1;
 use App\Models\User;
 use App\Models\Permission;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admin extends User
 {
-    use HasFactory ;
+    use HasFactory , SoftDeletes;
 
     protected $fillable = [
         'user_id',

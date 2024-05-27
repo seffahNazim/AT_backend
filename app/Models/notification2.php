@@ -13,6 +13,7 @@ class notification2 extends Model
         'employe_id',
         'text',
         'type',
+        'read_at'
     ];
 
     public function employe()

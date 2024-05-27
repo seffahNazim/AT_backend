@@ -30,11 +30,14 @@ Route::middleware('RefreshTokenIfExpired')->group(function () {
         Route::get('/getAllPointingsMonthDashboard', [AdminApp::class, 'getAllPointingsMonthDashboard']);
         Route::get('/getAllEmployes', [AdminApp::class , 'getAllEmployes']);
         Route::get('/getEmploye/{id}', [AdminApp::class, 'getEmploye']);
+        Route::put('/updateEmploye/{id}', [AdminController::class, 'updateEmploye']);
         Route::get('/getAllPointingsMonthEmploye', [AdminApp::class, 'getAllPointingsMonthEmploye']);
         Route::get('/getNotifications', [AdminApp::class, 'getNotifications']);
         Route::get('/getAdmins', [AdminApp::class, 'getAdmins']);
         Route::delete('/deleteEmploye', [AdminController::class, 'deleteEmploye']);
         Route::post('/addEmploye', [AdminController::class, 'addEmploye']);
+        Route::get('/permission', [AdminApp::class, 'permission']);
+        Route::put('/managePermission', [AdminController::class, 'managePermission']);
     });
 
     // employe
@@ -47,46 +50,10 @@ Route::middleware('RefreshTokenIfExpired')->group(function () {
         Route::post('/addJustification', [EmployeController::class, 'addJustification']);
     });
 
+
     // both
     Route::get('/logout', [AuthController::class , 'logout']);
     Route::get('/update', [AuthController::class , 'update']);
     Route::get('/refreshToken', [AuthController::class , 'refreshToken']);
 
 });
-
-
-// Route::middleware('RefreshTokenIfExpired')->group(function () {
-//     // admin
-//     Route::middleware('isAdmin')->prefix('admin')->group(function () {
-//         Route::post('/addJustification', [AdminController::class , 'addJustification']);
-//         Route::post('/deleteJustification', [AdminController::class , 'deleteJustification']);
-//         Route::post('/updateJustification', [AdminController::class , 'updateJustification']);
-
-//         Route::post('addAdmin', [AdminController::class , 'addAdmin']);
-//         Route::post('deleteAdmin', [AdminController::class , 'deleteAdmin']);
-
-//         Route::post('sendNotification', [AdminController::class , 'sendNotification']);
-
-//         Route::post('addPointing', [AdminController::class , 'addPointing']);
-//         Route::post('deletePointing', [AdminController::class , 'deletePointing']);
-//         Route::post('updatePointing', [AdminController::class , 'updatePointing']);
-
-//         Route::get('pointings', [AdminController::class , 'getAllPointings']);
-//         Route::get('pointing', [AdminController::class , 'getPointing']);
-//         Route::get('employes', [AdminController::class , 'getAllEmployes']);
-
-//     });
-
-//     // employe
-//     Route::middleware('isEmploye')->prefix('employe')->group(function () {
-//         Route::get('information', [AdminController::class , 'getInformation']);
-//         Route::get('pointing', [AdminController::class , 'getPointing']);
-//         Route::post('addPointing', [AdminController::class , 'addPointing']);
-//         Route::post('addJustification', [AdminController::class , 'addJustification']);
-//     });
-
-//     // both
-//     Route::get('/logout', [AuthController::class , 'logout']);
-//     Route::get('/refreshToken', [AuthController::class , 'refreshToken']);
-
-// });
